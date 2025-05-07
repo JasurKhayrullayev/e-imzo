@@ -1,12 +1,11 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import * as eimzoService from "/src/services/eimzo";
 
 import "./App.css";
 
 const App = () => {
-
   const [keys, setKeys] = useState([]);
-  const [selectedKey, setselectedKey] = useState(null);
+  const [selectedKey, setselectedKey] = useState(1);
   const [obj, setobj] = useState(null);
 
   const [result, setresult] = useState("");
@@ -21,33 +20,38 @@ const App = () => {
 
   const sign = async () => {
     setresult("");
-    const keyId = await eimzoService.preLoadKey(keys.find(item => item?.serialNumber === selectedKey));
+    const keyId = await eimzoService.preLoadKey(
+      keys.find((item) => item?.serialNumber === selectedKey)
+    );
     eimzoService.postLoadKey(keyId, obj).then((res) => setresult(res));
-  }
+  };
 
   return (
     <div className="App">
       <div className="group">
-        <select onChange={e => setselectedKey(e.target?.value)}>
+        <select
+          value={selectedKey}
+          onChange={(e) => setselectedKey(e.target.value)}
+        >
           {keys.map((item, i) => (
-            <option
-              selected={i === 0}
-              key={i}
-              value={item?.serialNumber}
-            >{item?.inn} - {item?.parsedAlias?.cn.toUpperCase()}</option>
+            <option key={i} value={item?.serialNumber}>
+              {item?.inn} - {item?.parsedAlias?.cn.toUpperCase()}
+            </option>
           ))}
         </select>
       </div>
       <div className="group">
-        <textarea onChange={e => setobj(e.target.value)}/>
+        <textarea onChange={(e) => setobj(e.target.value)} />
       </div>
       <div className="group">
-        <button onClick={sign} disabled={!selectedKey || !obj}>Imzolash</button>
+        <button onClick={sign} disabled={!selectedKey || !obj}>
+          Imzolash
+        </button>
       </div>
 
       {result !== "" && (
         <div className="group">
-          <textarea style={{height: "500px"}}>{result}</textarea>
+          <textarea style={{ height: "500px" }}>{result}</textarea>
         </div>
       )}
 
@@ -60,6 +64,6 @@ const App = () => {
       {/*</ul>*/}
     </div>
   );
-}
+};
 
 export default App;
